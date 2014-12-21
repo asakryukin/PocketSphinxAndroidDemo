@@ -40,6 +40,7 @@ containing a value of this type.
         public static final int icon=0x7f020000;
     }
     public static final class id {
+        public static final int Frontal_Camera=0x7f060005;
         public static final int any=0x7f060000;
         public static final int back=0x7f060001;
         public static final int caption_text=0x7f060003;

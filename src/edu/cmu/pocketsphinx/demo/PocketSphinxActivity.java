@@ -44,13 +44,19 @@ import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.objdetect.CascadeClassifier;
 
-
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.hardware.Camera;
+import android.hardware.Camera.CameraInfo;
+import android.hardware.Camera.PictureCallback;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import edu.cmu.pocketsphinx.Assets;
@@ -74,6 +80,10 @@ public class PocketSphinxActivity extends Activity implements
     private SpeechRecognizer recognizer;
     private HashMap<String, Integer> captions;
     private ChibiFaceRecognizer mFaceRecognizer;
+    private final static String DEBUG_TAG = "MakePhotoActivity";
+    private Camera camera;
+    private int cameraId = 0;
+    private ImageView  front;
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
@@ -87,7 +97,33 @@ public class PocketSphinxActivity extends Activity implements
         setContentView(R.layout.main);
         ((TextView) findViewById(R.id.caption_text))
                 .setText("Preparing the recognizer");
-
+        
+        front=(ImageView) findViewById(R.id.Frontal_Camera);
+        
+        //Get Camera 
+        if (!getPackageManager()
+                .hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+              Toast.makeText(this, "No camera on this device", Toast.LENGTH_LONG)
+                  .show();
+            } else {
+              cameraId = findFrontFacingCamera();
+              if (cameraId < 0) {
+                Toast.makeText(this, "No front facing camera found.",
+                    Toast.LENGTH_LONG).show();
+              } else {
+                camera = Camera.open(cameraId);
+              }
+            }
+        PictureCallback pC=new PictureCallback() {
+			
+			@Override
+			public void onPictureTaken(byte[] data, Camera camera) {
+				// TODO Auto-generated method stub
+				Bitmap bmp=new BitmapFactory().decodeByteArray(data, 0, data.length);
+				front.setImageBitmap(bmp);
+			}
+		};
+		camera.takePicture(null, null, pC);
         // Recognizer initialization is a time-consuming and it involves IO,
         // so we execute it in async task
         mPath = Environment.getExternalStorageDirectory().toString() + "/chibifacerecognitionfiles/";
@@ -180,7 +216,21 @@ public class PocketSphinxActivity extends Activity implements
         File languageModel = new File(modelsDir, "lm/weather.dmp");
         recognizer.addNgramSearch(FORECAST_SEARCH, languageModel);
     }
-    
+    private int findFrontFacingCamera() {
+        int cameraId = -1;
+        // Search for the front facing camera
+        int numberOfCameras = Camera.getNumberOfCameras();
+        for (int i = 0; i < numberOfCameras; i++) {
+          CameraInfo info = new CameraInfo();
+          Camera.getCameraInfo(i, info);
+          if (info.facing == CameraInfo.CAMERA_FACING_FRONT) {
+            Log.d(DEBUG_TAG, "Camera found");
+            cameraId = i;
+            break;
+          }
+        }
+        return cameraId;
+      }
  // must be included (just copy-paste)
  	private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
  	    @Override
@@ -233,5 +283,7 @@ public class PocketSphinxActivity extends Activity implements
 		// must be included in onResume
 		OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_9, this, mLoaderCallback);
 	}
+
+	
 	
 }
