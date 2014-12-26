@@ -70,7 +70,7 @@ public class PocketSphinxActivity extends Activity implements
     private static final String KWS_SEARCH = "wakeup";
     private static final String FORECAST_SEARCH = "forecast";
     private static final String DIGITS_SEARCH = "digits";
-    private static final String MENU_SEARCH = "menu";
+    private static final String COMMAND_SEARCH = "menu";
     private static final String KEYPHRASE = "hi chibi";
     private File mCascadeFile;
 	private CascadeClassifier faceCascade;
@@ -91,7 +91,7 @@ public class PocketSphinxActivity extends Activity implements
         // Prepare the data for UI
         captions = new HashMap<String, Integer>();
         captions.put(KWS_SEARCH, R.string.kws_caption);
-        captions.put(MENU_SEARCH, R.string.menu_caption);
+        captions.put(COMMAND_SEARCH, R.string.menu_caption);
         captions.put(DIGITS_SEARCH, R.string.digits_caption);
         captions.put(FORECAST_SEARCH, R.string.forecast_caption);
         setContentView(R.layout.main);
@@ -160,7 +160,7 @@ public class PocketSphinxActivity extends Activity implements
     public void onPartialResult(Hypothesis hypothesis) {
         String text = hypothesis.getHypstr();
         if (text.equals(KEYPHRASE))
-            switchSearch(MENU_SEARCH);
+            switchSearch(COMMAND_SEARCH);
         else if (text.equals(DIGITS_SEARCH))
             switchSearch(DIGITS_SEARCH);
         else if (text.equals(FORECAST_SEARCH))
@@ -209,7 +209,7 @@ public class PocketSphinxActivity extends Activity implements
         recognizer.addKeyphraseSearch(KWS_SEARCH, KEYPHRASE);
         // Create grammar-based searches.
         File menuGrammar = new File(modelsDir, "grammar/menu.gram");
-        recognizer.addGrammarSearch(MENU_SEARCH, menuGrammar);
+        recognizer.addGrammarSearch(COMMAND_SEARCH, menuGrammar);
         File digitsGrammar = new File(modelsDir, "grammar/digits.gram");
         recognizer.addGrammarSearch(DIGITS_SEARCH, digitsGrammar);
         // Create language model search.
