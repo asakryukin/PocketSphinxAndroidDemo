@@ -45,8 +45,7 @@ containing a value of this type.
         public static final int back=0x7f060001;
         public static final int caption_text=0x7f060003;
         public static final int front=0x7f060002;
-        public static final int result_text=0x7f060006;
-        public static final int tutorial3_activity_java_surface_view=0x7f060004;
+        public static final int result_text=0x7f060004;
     }
     public static final class layout {
         public static final int main=0x7f030000;
@@ -55,21 +54,6 @@ containing a value of this type.
         public static final int lbpcascade_frontalface=0x7f040000;
     }
     public static final class string {
-        public static final int BLANK=0x7f050007;
-        public static final int SBackCamera=0x7f050015;
-        public static final int SCanntoPredic=0x7f050010;
-        public static final int SDelete=0x7f05000b;
-        public static final int SEnter=0x7f05000c;
-        public static final int SFaceName=0x7f050012;
-        public static final int SFrontCamera=0x7f050014;
-        public static final int SIdle=0x7f050011;
-        public static final int SSearch=0x7f05000a;
-        public static final int SSearching=0x7f050013;
-        public static final int SStopSearch=0x7f05000e;
-        public static final int SStopTrain=0x7f05000d;
-        public static final int STrain=0x7f050008;
-        public static final int SViewAll=0x7f050009;
-        public static final int Straininig=0x7f05000f;
         public static final int app_name=0x7f050000;
         public static final int digits_caption=0x7f050005;
         public static final int forecast_caption=0x7f050006;
