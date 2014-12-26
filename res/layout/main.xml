@@ -4,7 +4,7 @@
     android:layout_height="fill_parent"
     android:orientation="vertical"
     android:padding="16dp" >
-
+	
     <TextView
         android:id="@+id/caption_text"
         android:layout_width="wrap_content"
@@ -12,6 +12,17 @@
         android:layout_gravity="center_horizontal"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:typeface="sans" />
+	<edu.cmu.pocketsphinx.demo.Tutorial3View
+                    android:id="@+id/tutorial3_activity_java_surface_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.88" />
+
+    <ImageView
+        android:id="@+id/Frontal_Camera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/icon" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,12 +35,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <ImageView
-            android:id="@+id/Frontal_Camera"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/icon" />
 
     </LinearLayout>
 </LinearLayout>

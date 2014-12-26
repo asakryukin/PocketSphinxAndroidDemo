@@ -40,8 +40,14 @@ import java.io.InputStream;
 import java.util.HashMap;
 
 import org.opencv.android.BaseLoaderCallback;
+import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
+import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfRect;
+import org.opencv.core.Rect;
+import org.opencv.core.Size;
 import org.opencv.objdetect.CascadeClassifier;
 
 import android.app.Activity;
@@ -65,7 +71,7 @@ import edu.cmu.pocketsphinx.RecognitionListener;
 import edu.cmu.pocketsphinx.SpeechRecognizer;
 
 public class PocketSphinxActivity extends Activity implements
-        RecognitionListener {
+        RecognitionListener, CvCameraViewListener2 {
 
     private static final String KWS_SEARCH = "wakeup";
     private static final String FORECAST_SEARCH = "forecast";
@@ -79,11 +85,19 @@ public class PocketSphinxActivity extends Activity implements
 	private String TAG="mylog";
     private SpeechRecognizer recognizer;
     private HashMap<String, Integer> captions;
-    private ChibiFaceRecognizer mFaceRecognizer;
     private final static String DEBUG_TAG = "MakePhotoActivity";
     private Camera camera;
     private int cameraId = 0;
     private ImageView  front;
+    
+    private Tutorial3View   mOpenCvCameraView;
+    private CascadeClassifier      mJavaDetector;
+    PersonRecognizer fr;
+    private Mat                    mRgba;
+    private Mat                    mGray;
+    private float                  mRelativeFaceSize   = 0.2f;
+    private int                    mAbsoluteFaceSize   = 0;
+    
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
@@ -100,8 +114,12 @@ public class PocketSphinxActivity extends Activity implements
         
         front=(ImageView) findViewById(R.id.Frontal_Camera);
         
+        mOpenCvCameraView = (Tutorial3View) findViewById(R.id.tutorial3_activity_java_surface_view);
+        
+        mOpenCvCameraView.setCvCameraViewListener(this);
+        mOpenCvCameraView.setCamFront();
         //Get Camera 
-        if (!getPackageManager()
+        /*if (!getPackageManager()
                 .hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
               Toast.makeText(this, "No camera on this device", Toast.LENGTH_LONG)
                   .show();
@@ -122,14 +140,14 @@ public class PocketSphinxActivity extends Activity implements
 				Bitmap bmp=new BitmapFactory().decodeByteArray(data, 0, data.length);
 				front.setImageBitmap(bmp);
 			}
-		};
-		camera.takePicture(null, null, pC);
+		};*/
+		//camera.takePicture(null, null, pC);
         // Recognizer initialization is a time-consuming and it involves IO,
         // so we execute it in async task
         mPath = Environment.getExternalStorageDirectory().toString() + "/chibifacerecognitionfiles/";
 		
 		// constructor which is already the same
-		mFaceRecognizer = new ChibiFaceRecognizer(mPath, classifier, faceCascade);
+		//mFaceRecognizer = new ChibiFaceRecognizer(mPath, classifier, faceCascade);
 		
 		new AsyncTask<Void, Void, Exception>() {
             @Override
@@ -232,48 +250,68 @@ public class PocketSphinxActivity extends Activity implements
         return cameraId;
       }
  // must be included (just copy-paste)
- 	private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
- 	    @Override
- 	    public void onManagerConnected(int status) {
- 	        switch (status) {
- 	            case LoaderCallbackInterface.SUCCESS:
- 	            {
-                     try {
-                     	classifier = new PersonRecognizer(mPath); 
-                     	// load cascade file from application resources
-                         InputStream is = getResources().openRawResource(R.raw.lbpcascade_frontalface);
-                         File cascadeDir = getDir("cascade", Context.MODE_PRIVATE);
-                         mCascadeFile = new File(cascadeDir, "lbpcascade.xml");
-                         FileOutputStream os = new FileOutputStream(mCascadeFile);
 
-                         byte[] buffer = new byte[4096];
-                         int bytesRead;
-                         while ((bytesRead = is.read(buffer)) != -1) {
-                             os.write(buffer, 0, bytesRead);
-                         }
-                         is.close();
-                         os.close();
-                         faceCascade = new CascadeClassifier(mCascadeFile.getAbsolutePath());
-                         if (faceCascade.empty()) {
-                             Log.e(TAG, "Failed to load cascade classifier");
-                             faceCascade = null;
-                         } else
-                             Log.i(TAG, "Loaded cascade classifier from " + mCascadeFile.getAbsolutePath());
-                         cascadeDir.delete();
-                     } catch (IOException e) {
-                         e.printStackTrace();
-                         Log.e(TAG, "Failed to load cascade. Exception thrown: " + e);
-                     }
- 	                Log.i(TAG, "OpenCV loaded successfully");
- 	                Log.d("mylog", "OPENCV LOADED SUCCESSFULLY");
- 	            } break;
- 	            default:
- 	            {
- 	                super.onManagerConnected(status);
- 	            } break;
- 	        }
- 	    }
- 	};
+    private BaseLoaderCallback  mLoaderCallback = new BaseLoaderCallback(this) {
+        @Override
+        public void onManagerConnected(int status) {
+            switch (status) {
+                case LoaderCallbackInterface.SUCCESS:
+                {
+                    Log.i(TAG, "OpenCV loaded successfully");
+
+                    // Load native library after(!) OpenCV initialization
+                 //   System.loadLibrary("detection_based_tracker");
+            
+                    
+ 
+                    //fr=new PersonRecognizer(mPath);
+                    String s = getResources().getString(R.string.Straininig);
+                    Toast.makeText(getApplicationContext(),s, Toast.LENGTH_LONG).show();
+                    //fr.load();
+                    
+                    try {
+                        // load cascade file from application resources
+                        InputStream is = getResources().openRawResource(R.raw.lbpcascade_frontalface);
+                        File cascadeDir = getDir("cascade", Context.MODE_PRIVATE);
+                        mCascadeFile = new File(cascadeDir, "lbpcascade.xml");
+                        FileOutputStream os = new FileOutputStream(mCascadeFile);
+
+                        byte[] buffer = new byte[4096];
+                        int bytesRead;
+                        while ((bytesRead = is.read(buffer)) != -1) {
+                            os.write(buffer, 0, bytesRead);
+                        }
+                        is.close();
+                        os.close();
+
+                        mJavaDetector = new CascadeClassifier(mCascadeFile.getAbsolutePath());
+                        if (mJavaDetector.empty()) {
+                            Log.e(TAG, "Failed to load cascade classifier");
+                            mJavaDetector = null;
+                        } else
+                            Log.i(TAG, "Loaded cascade classifier from " + mCascadeFile.getAbsolutePath());
+
+       //                 mNativeDetector = new DetectionBasedTracker(mCascadeFile.getAbsolutePath(), 0);
+
+                        cascadeDir.delete();
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "Failed to load cascade. Exception thrown: " + e);
+                    }
+
+                    mOpenCvCameraView.enableView();
+              
+                } break;
+                default:
+                {
+                    super.onManagerConnected(status);
+                } break;
+                
+                
+            }
+        }
+    };
  	
 @Override
 	
@@ -284,6 +322,62 @@ public class PocketSphinxActivity extends Activity implements
 		OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_9, this, mLoaderCallback);
 	}
 
+@Override
+public void onCameraViewStarted(int width, int height) {
+	// TODO Auto-generated method stub
 	
+}
+
+@Override
+public void onCameraViewStopped() {
+	// TODO Auto-generated method stub
+	//mGray.release();
+    //mRgba.release();
+}
+
+@Override
+public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
+	// TODO Auto-generated method stub
+	mRgba = inputFrame.rgba();
+    mGray = inputFrame.gray();
+    if (mAbsoluteFaceSize == 0) {
+        int height = mGray.rows();
+        if (Math.round(height * mRelativeFaceSize) > 0) {
+            mAbsoluteFaceSize = Math.round(height * mRelativeFaceSize);
+        }
+      //  mNativeDetector.setMinFaceSize(mAbsoluteFaceSize);
+    }
+
+    MatOfRect faces = new MatOfRect();
+
+        if (mJavaDetector != null)
+            mJavaDetector.detectMultiScale(mGray, faces, 1.1, 2, 2, // TODO: objdetect.CV_HAAR_SCALE_IMAGE
+                    new Size(mAbsoluteFaceSize, mAbsoluteFaceSize), new Size());
+    
+    
+    Rect[] facesArray = faces.toArray();
+    if ((facesArray.length>0)){
+    	
+    	Log.d("mylog", "DETECTED!!!!");
+    	
+    }else {
+    	Log.d("mylog", "NOONE!!!");
+    }
+	return null;
+}
+
+@Override
+protected void onDestroy() {
+	// TODO Auto-generated method stub
+	super.onDestroy();
+	mOpenCvCameraView.disableView();
+}
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		if (mOpenCvCameraView != null)
+            mOpenCvCameraView.disableView();       
+	}
 	
 }
