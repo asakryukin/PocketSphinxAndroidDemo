@@ -71,7 +71,7 @@ public class PocketSphinxActivity extends Activity implements
     private static final String FORECAST_SEARCH = "forecast";
     private static final String DIGITS_SEARCH = "digits";
     private static final String MENU_SEARCH = "menu";
-    private static final String KEYPHRASE = "oh mighty computer";
+    private static final String KEYPHRASE = "hi chibi";
     private File mCascadeFile;
 	private CascadeClassifier faceCascade;
 	private PersonRecognizer classifier;
