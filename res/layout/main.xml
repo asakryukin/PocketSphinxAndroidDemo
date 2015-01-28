@@ -12,7 +12,11 @@
         android:layout_gravity="center_horizontal"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:typeface="sans" />
-
+	<edu.cmu.pocketsphinx.demo.Tutorial3View
+                    android:id="@+id/tutorial3_activity_java_surface_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.88" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -25,11 +29,67 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
-        <ImageView
-            android:id="@+id/Frontal_Camera"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/icon" />
+
 
     </LinearLayout>
+<TextView
+        android:id="@+id/main_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:textAppearance="?android:attr/textAppearanceLarge"/>
+<TextView
+        android:id="@+id/main_rect_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:textAppearance="?android:attr/textAppearanceLarge"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+		<ToggleButton
+            android:id="@+id/main_change"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Change"
+            android:textOn="Front"
+            android:textOff="Back" />
+        <ToggleButton
+            android:id="@+id/main_train"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Train" />
+
+    
+
+        <EditText
+            android:id="@+id/main_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:inputType="textPersonName" >
+
+            <requestFocus />
+        </EditText>
+        <ToggleButton
+            android:id="@+id/main_grab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="GRAB" />
+	<ToggleButton
+        android:id="@+id/main_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SEARCH" />
+    </LinearLayout>
+	
+    <ImageView
+        android:id="@+id/imageView_IV"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/icon" />
+
+    
+
 </LinearLayout>

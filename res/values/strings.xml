@@ -2,10 +2,25 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
     <string name="app_name">PocketSphinx Demo</string>
+    <string name="BLANK"></string>
+    <string name="STrain">Train</string>
+    <string name="SViewAll">View all faces</string>
+    <string name="SSearch">Search</string>
+    <string name="SDelete">Delete</string>
+    <string name="SEnter">Enter face name, then pres Rec</string>
+    <string name="SStopTrain">Stop Training</string>
+    <string name="SStopSearch">Stop Search</string>
+    <string name="Straininig">Training...</string>
+    <string name="SCanntoPredic">More then one face is needed to predict</string>
+    <string name="SIdle">Idle</string>
+    <string name="SFaceName">Face name:</string>
+    <string name="SSearching">Searching</string>
+    <string name="SFrontCamera">Front Camera</string>
+    <string name="SBackCamera">Back Camera</string>
     <string name="start">Start</string>
     <string name="stop">Stop</string>
     
-    <string name="kws_caption">To start demonstration say \"oh mighty computer\".</string>
+    <string name="kws_caption">To start demonstration say \"Hi Chibi!\".</string>
     <string name="menu_caption">Say \"digits\" or \"forecast\" to choose particular example.</string>
     <string name="digits_caption">Let\'s recognize some digits: say something like \"one two three four five\".</string>
     <string name="forecast_caption">Say something typical to a weather forecast like \"sunny spells on Wednesday\".</string>
