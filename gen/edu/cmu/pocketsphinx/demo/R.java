@@ -40,37 +40,49 @@ containing a value of this type.
         public static final int icon=0x7f020000;
     }
     public static final class id {
-        public static final int acces_item_name=0x7f060003;
-        public static final int access_item_task1=0x7f060004;
-        public static final int access_item_task2=0x7f060005;
-        public static final int access_item_task3=0x7f060006;
-        public static final int access_list_cancel=0x7f060009;
-        public static final int access_list_list=0x7f060007;
-        public static final int access_list_ok=0x7f060008;
-        public static final int any=0x7f060000;
-        public static final int back=0x7f060001;
-        public static final int buttonDel=0x7f06000d;
-        public static final int caption_text=0x7f06000e;
-        public static final int front=0x7f060002;
-        public static final int gallery1=0x7f06000a;
-        public static final int imageButton1=0x7f06000c;
-        public static final int imageView_IV=0x7f060018;
-        public static final int main_change=0x7f060013;
-        public static final int main_grab=0x7f060016;
-        public static final int main_name=0x7f060015;
-        public static final int main_rect_size=0x7f060012;
-        public static final int main_search=0x7f060017;
-        public static final int main_status=0x7f060011;
-        public static final int main_train=0x7f060014;
-        public static final int result_text=0x7f060010;
-        public static final int switcher=0x7f06000b;
-        public static final int tutorial3_activity_java_surface_view=0x7f06000f;
+        public static final int acces_item_name=0x7f070003;
+        public static final int access_item_task1=0x7f070004;
+        public static final int access_item_task2=0x7f070005;
+        public static final int access_item_task3=0x7f070006;
+        public static final int access_list_cancel=0x7f070009;
+        public static final int access_list_list=0x7f070007;
+        public static final int access_list_ok=0x7f070008;
+        public static final int any=0x7f070000;
+        public static final int back=0x7f070001;
+        public static final int buttonDel=0x7f07000d;
+        public static final int button_scan=0x7f070012;
+        public static final int caption_text=0x7f070013;
+        public static final int discoverable=0x7f07001f;
+        public static final int front=0x7f070002;
+        public static final int gallery1=0x7f07000a;
+        public static final int imageButton1=0x7f07000c;
+        public static final int imageView_IV=0x7f07001d;
+        public static final int main_change=0x7f070018;
+        public static final int main_grab=0x7f07001b;
+        public static final int main_name=0x7f07001a;
+        public static final int main_rect_size=0x7f070017;
+        public static final int main_search=0x7f07001c;
+        public static final int main_status=0x7f070016;
+        public static final int main_train=0x7f070019;
+        public static final int new_devices=0x7f070011;
+        public static final int paired_devices=0x7f07000f;
+        public static final int result_text=0x7f070015;
+        public static final int scan=0x7f07001e;
+        public static final int switcher=0x7f07000b;
+        public static final int title_new_devices=0x7f070010;
+        public static final int title_paired_devices=0x7f07000e;
+        public static final int tutorial3_activity_java_surface_view=0x7f070014;
     }
     public static final class layout {
         public static final int access_item=0x7f030000;
         public static final int access_list=0x7f030001;
         public static final int catalog_view=0x7f030002;
-        public static final int main=0x7f030003;
+        public static final int device_list=0x7f030003;
+        public static final int device_name=0x7f030004;
+        public static final int main=0x7f030005;
+    }
+    public static final class menu {
+        public static final int option_menu=0x7f060000;
     }
     public static final class raw {
         public static final int lbpcascade_frontalface=0x7f040000;
@@ -92,12 +104,33 @@ containing a value of this type.
         public static final int SViewAll=0x7f050003;
         public static final int Straininig=0x7f050009;
         public static final int app_name=0x7f050000;
+        public static final int bt_not_enabled_leaving=0x7f050018;
+        public static final int button_scan=0x7f050022;
+        /**  Options Menu 
+         */
+        public static final int connect=0x7f050023;
         public static final int digits_caption=0x7f050014;
+        public static final int discoverable=0x7f050024;
         public static final int forecast_caption=0x7f050015;
         public static final int kws_caption=0x7f050012;
         public static final int menu_caption=0x7f050013;
+        public static final int none_found=0x7f05001f;
+        public static final int none_paired=0x7f05001e;
+        public static final int not_connected=0x7f050017;
+        /**   DeviceListActivity 
+         */
+        public static final int scanning=0x7f05001c;
+        public static final int select_device=0x7f05001d;
+        /**   BluetoothChat 
+         */
+        public static final int send=0x7f050016;
         public static final int start=0x7f050010;
         public static final int stop=0x7f050011;
+        public static final int title_connected_to=0x7f05001a;
+        public static final int title_connecting=0x7f050019;
+        public static final int title_not_connected=0x7f05001b;
+        public static final int title_other_devices=0x7f050021;
+        public static final int title_paired_devices=0x7f050020;
     }
     public static final class styleable {
         /** Attributes that can be used with a CameraBridgeViewBase.
