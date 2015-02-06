@@ -10,8 +10,5 @@
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/OpenCV Library - 2.4.10"/>
-	<classpathentry exported="true" kind="lib" path="libs/opencv-android-x86.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/javacpp.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/javacv.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
