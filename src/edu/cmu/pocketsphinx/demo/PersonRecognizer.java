@@ -1,17 +1,28 @@
 package edu.cmu.pocketsphinx.demo;
 
+import static  com.googlecode.javacv.cpp.opencv_highgui.*;
+import static  com.googlecode.javacv.cpp.opencv_core.*;
+
+import static  com.googlecode.javacv.cpp.opencv_imgproc.*;
+import static com.googlecode.javacv.cpp.opencv_contrib.*;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
+import java.util.ArrayList;
 
-import org.bytedeco.javacpp.opencv_contrib.FaceRecognizer;
-import org.bytedeco.javacpp.opencv_core.IplImage;
-import org.bytedeco.javacpp.opencv_core.MatVector;
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 
+import com.googlecode.javacv.cpp.opencv_imgproc;
+import com.googlecode.javacv.cpp.opencv_contrib.FaceRecognizer;
+import com.googlecode.javacv.cpp.opencv_core.IplImage;
+import com.googlecode.javacv.cpp.opencv_core.MatVector;
+
 import android.graphics.Bitmap;
+import android.os.Environment;
 import android.util.Log;
+import android.widget.Toast;
 
 public  class PersonRecognizer {
 	
@@ -28,7 +39,7 @@ public  class PersonRecognizer {
 	 
     PersonRecognizer(String path)
     {
-      faceRecognizer =  org.bytedeco.javacpp.opencv_contrib.createLBPHFaceRecognizer(2,8,8,8,200);
+      faceRecognizer =  com.googlecode.javacv.cpp.opencv_contrib.createLBPHFaceRecognizer(2,8,8,8,200);
   	 // path=Environment.getExternalStorageDirectory()+"/facerecog/faces/";
      mPath=path;
      labelsFile= new labels(mPath);
@@ -39,11 +50,11 @@ public  class PersonRecognizer {
     void changeRecognizer(int nRec)
     {
     	switch(nRec) {
-    	case 0: faceRecognizer = org.bytedeco.javacpp.opencv_contrib.createLBPHFaceRecognizer(1,8,8,8,100);
+    	case 0: faceRecognizer = com.googlecode.javacv.cpp.opencv_contrib.createLBPHFaceRecognizer(1,8,8,8,100);
     			break;
-    	case 1: faceRecognizer = org.bytedeco.javacpp.opencv_contrib.createFisherFaceRecognizer();
+    	case 1: faceRecognizer = com.googlecode.javacv.cpp.opencv_contrib.createFisherFaceRecognizer();
     			break;
-    	case 2: faceRecognizer = org.bytedeco.javacpp.opencv_contrib.createEigenFaceRecognizer();
+    	case 2: faceRecognizer = com.googlecode.javacv.cpp.opencv_contrib.createEigenFaceRecognizer();
     			break;
     	}
     	train();
@@ -85,7 +96,7 @@ public  class PersonRecognizer {
         MatVector images = new MatVector(imageFiles.length);
 
         int[] labels = new int[imageFiles.length];
-        org.bytedeco.javacpp.opencv_core.Mat m=new org.bytedeco.javacpp.opencv_core.Mat(imageFiles.length);
+
         int counter = 0;
         int label;
 
@@ -97,8 +108,8 @@ public  class PersonRecognizer {
    
         for (File image : imageFiles) {
         	String p = image.getAbsolutePath();
-        	//org.bytedeco.javacpp.opencv_highgui.cvLoadImage(p);
-            img = org.bytedeco.javacpp.opencv_highgui.cvLoadImage(p);
+            img = cvLoadImage(p);
+            
             if (img==null)
             	Log.e("Error","Error cVLoadImage");
             Log.i("image",p);
@@ -108,7 +119,6 @@ public  class PersonRecognizer {
             int icount=Integer.parseInt(p.substring(i2+1,i3)); 
             if (count<icount) count++;
             
-           
             String description=p.substring(i1,i2);
             
             if (labelsFile.get(description)<0)
@@ -116,12 +126,11 @@ public  class PersonRecognizer {
             
             label = labelsFile.get(description);
 
-            grayImg = IplImage.create(img.width(), img.height(), 8, 1);
-            
-            org.bytedeco.javacpp.opencv_imgproc.cvCvtColor(img, grayImg,6);
-            
-            images.put(counter, new org.bytedeco.javacpp.opencv_core.Mat(grayImg));
-           
+            grayImg = IplImage.create(img.width(), img.height(), IPL_DEPTH_8U, 1);
+
+            cvCvtColor(img, grayImg, CV_BGR2GRAY);
+
+            images.put(counter, grayImg);
 
             labels[counter] = label;
 
@@ -129,7 +138,7 @@ public  class PersonRecognizer {
         }
         if (counter>0)
         	if (labelsFile.max()>1)
-        //faceRecognizer.train(images, labels);
+        		faceRecognizer.train(images, labels);
         labelsFile.Save();
         
 	return true;
@@ -152,7 +161,7 @@ public  class PersonRecognizer {
 		IplImage ipl = MatToIplImage(m,WIDTH, HEIGHT);
 //		IplImage ipl = MatToIplImage(m,-1, -1);
 		
-		faceRecognizer.predict(new org.bytedeco.javacpp.opencv_core.Mat(ipl), n, p);
+		faceRecognizer.predict(ipl, n, p);
 		
 		if (n[0]!=-1)
 		 mProb=(int)p[0];
@@ -188,14 +197,14 @@ public  class PersonRecognizer {
 		}
 
 		IplImage image = IplImage.create(bmp.getWidth(), bmp.getHeight(),
-				 org.bytedeco.javacpp.opencv_core.IPL_DEPTH_8U, 4);
+				IPL_DEPTH_8U, 4);
 
 		bmp.copyPixelsToBuffer(image.getByteBuffer());
 		
 		IplImage grayImg = IplImage.create(image.width(), image.height(),
-				org.bytedeco.javacpp.opencv_core.IPL_DEPTH_8U, 1);
+				IPL_DEPTH_8U, 1);
 
-		org.bytedeco.javacpp.opencv_imgproc.cvCvtColor(image, grayImg, org.bytedeco.javacpp.opencv_imgproc.CV_BGR2GRAY);
+		cvCvtColor(image, grayImg, opencv_imgproc.CV_BGR2GRAY);
 
 		return grayImg;
 	}

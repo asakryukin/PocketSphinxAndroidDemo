@@ -178,7 +178,7 @@ public class PocketSphinxActivity extends Activity implements
     ImageButton imCamera;
     
     TextView textState;
-    org.bytedeco.javacpp.opencv_contrib.FaceRecognizer faceRecognizer;
+    com.googlecode.javacv.cpp.opencv_contrib.FaceRecognizer faceRecognizer;
     static final long MAXIMG = 10;
     
     ArrayList<Mat> alimgs = new ArrayList<Mat>();
