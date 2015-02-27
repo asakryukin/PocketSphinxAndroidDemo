@@ -44,6 +44,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Timer;
@@ -317,6 +318,8 @@ public class PocketSphinxActivity extends Activity implements
         mTts = new TextToSpeech(this,this);
 		mTts.setLanguage(Locale.US);
 		mTts.setSpeechRate((float)0.9);
+		
+		mTts.speak("Hello", TextToSpeech.QUEUE_FLUSH, null);
         
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         
@@ -616,6 +619,10 @@ public class PocketSphinxActivity extends Activity implements
             String text = hypothesis.getHypstr();
             speech_result=text;
             makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+            if(speech_result.indexOf("who")>0){
+            	mTts.speak("I am Chibi", TextToSpeech.QUEUE_FLUSH, null);
+                
+            }
             if (speech_result.length()>10){
             if ((!active_person.equals(""))&&(speech_result.indexOf("task")>0))
         	{
@@ -878,8 +885,10 @@ public class PocketSphinxActivity extends Activity implements
         		 }
         for (int i = 0; i < facesArray.length; i++)
         { Core.rectangle(mRgba, facesArray[i].tl(), facesArray[i].br(), FACE_RECT_COLOR, 3);
-        bl_x=facesArray[0].x;
-        bl_y=facesArray[0].y;
+        //bl_x=facesArray[0].x;
+        //bl_y=facesArray[0].y;
+        bl_x=(float) 0.5*facesArray[0].width+facesArray[0].x;
+        bl_y=(float) 0.5*facesArray[0].height+facesArray[0].y;
         }
         
         
@@ -936,18 +945,50 @@ public class PocketSphinxActivity extends Activity implements
 
         // Initialize the send button with a listener that for click events
         mSendButton = (Button) findViewById(R.id.button_send);*/
-        CountDownTimer cdt=new CountDownTimer(30000, 1000) {
+        CountDownTimer cdt=new CountDownTimer(30000, 300) {
 			
+        	private int index=0;
+        	private float[][] data=new float[5][2];
+        	private float[] distance=new float[5];
 			@Override
 			public void onTick(long millisUntilFinished) {
 				// TODO Auto-generated method stub
-				sendMessage("x:"+bl_x+"    y:"+bl_y);
+				if (index<5){
+					data[index][0]=bl_x;
+					data[index][1]=bl_y;
+					index++;
+					
+				}else{
+					float[] xs=new float[5];
+					float[] ys=new float[5];
+					float mx,my;
+					
+					for(int i=0;i<5;i++){
+						xs[i]=data[i][0];
+						ys[i]=data[i][1];
+					}
+					Arrays.sort(xs);
+					Arrays.sort(ys);
+					
+					mx=xs[2];
+					my=ys[2];
+					
+					/*for(int i=0;i<5;i++){
+						distance[i]=(float) Math.sqrt((mx-xs[i])*(mx-xs[i])+(my-ys[i])*(my-ys[i]));
+					}
+					Arrays.sort(distance);
+					*/
+					
+					sendMessage("x"+( Math.round(mx))+"y"+( Math.round(my))+"$");
+					index=0;
+				}
+				
+				
 			}
 			
 			@Override
 			public void onFinish() {
 				// TODO Auto-generated method stub
-				sendMessage("AAAAAAAA");
 				start();
 			}
 		};

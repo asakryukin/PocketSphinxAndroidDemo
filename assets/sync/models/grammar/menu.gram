@@ -1,5 +1,13 @@
 #JSGF V1.0;
 
 grammar menu;
-
-public <item> = ( execute ) ( task ) (one|two|three);
+<color> = black | white | grey | red | blue | green | pink | brown | magenta;
+<size> = big | large | small | little | medium | short | tall | tiny | huge | long;
+<shape> = circle | triangle | square | rectangle | oval | hexagon | ellipse;
+<object> = [<size>] [<color>] (<shape>);
+<preposition> = ( (in) (front) (of) ) | (behind) | (near) | (on) | (under);
+<numbers>= (one | two | three);
+<grid>= (grid) (row) (<numbers>) (column) (<numbers>);
+<move> = (move) (<object>) (((towards) (<grid>)) | ((<preposition>) (<object>)));
+<go to> = (goto) (((position) (<number>))|(<object>)) [ ((via)|(through)) ((<grid>)|(<object>)) ];
+public <item> =  ((<go to>)|(<move>) | ((who) (are) (you)));
