@@ -63,6 +63,7 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.objdetect.CascadeClassifier;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -612,15 +613,16 @@ public class PocketSphinxActivity extends Activity implements
       	
     }
     
-    @Override
+    @SuppressLint("NewApi")
+	@Override
     public void onResult(Hypothesis hypothesis) {
         ((TextView) findViewById(R.id.result_text)).setText("");
         if (hypothesis != null) {
             String text = hypothesis.getHypstr();
             speech_result=text;
             makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
-            if(speech_result.indexOf("who")>0){
-            	mTts.speak("I am Chibi", TextToSpeech.QUEUE_FLUSH, null);
+            if(speech_result.indexOf("who")>=0){
+            	mTts.speak("As part of a previously mentioned required test protocol, we can no longer lie to you. When the testing is over, you will be missed", TextToSpeech.QUEUE_FLUSH, null,"me");
                 
             }
             if (speech_result.length()>10){
@@ -909,6 +911,20 @@ public class PocketSphinxActivity extends Activity implements
 	@Override
 	public void onInit(int status) {
 		// TODO Auto-generated method stub
+		    if (status == TextToSpeech.SUCCESS) {
+		        int result = mTts.setLanguage(Locale.US);
+		        if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+		            Log.e("TTS", "This Language is not supported");
+		            Intent installIntent = new Intent();
+		            installIntent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
+		            startActivity(installIntent);
+		        } else {
+		           // btnSpeak.setEnabled(true);
+		            //speakOut();
+		        }
+		    } else {
+		        Log.e("TTS", "Initilization Failed!");
+		    }
 		
 	}
 	@Override
