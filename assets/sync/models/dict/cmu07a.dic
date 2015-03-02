@@ -5,11 +5,16 @@ box	B AA K S
 black	B L AE K
 blue	B L UW
 brown	B R AW N
+can	K AE N
+can(2)	K AH N
 chibi	CH IY B IH
 cold	K OW L D
 column	K AA L AH M
 computer	K AH M P Y UW T ER
 circle	S ER K AH L
+created	K R IY EY T AH D
+created(2)	K R IY EY T IH D
+do	D UW
 digits	D IH JH AH T S
 ellipse	IH L IH P S
 execute	EH K S AH K Y UW T
@@ -20,7 +25,7 @@ green	G R IY N
 grey	G R EY
 grid	G R IH D
 hexagon	HH EH K S AH G AA N
-hi	HH AY
+hi	HH EY
 huge	HH Y UW JH
 huge(2)	Y UW JH
 in	IH N
@@ -28,6 +33,7 @@ is	IH Z
 large	L AA R JH
 long	L AO NG
 little	L IH T AH L
+made	M EY D
 magenta	M AH JH EH N T AH
 menu	M EH N Y UW
 medium	M IY D IY AH M
@@ -64,6 +70,8 @@ via	V AY AH
 via(2)	V IY AH
 wakeup	W EY K AH P
 weather	W EH DH ER
+what	W AH T
+where	W EH R
 white	W AY T
 who	HH UW
 you	Y UW

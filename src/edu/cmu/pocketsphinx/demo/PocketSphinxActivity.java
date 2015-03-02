@@ -106,6 +106,8 @@ import edu.cmu.pocketsphinx.SpeechRecognizer;
 public class PocketSphinxActivity extends Activity implements
         RecognitionListener, CvCameraViewListener2, OnClickListener, OnInitListener {
 
+	private String ResultSpeech="";
+	private String last_person="";
     private static final String KWS_SEARCH = "wakeup";
     private static final String FORECAST_SEARCH = "forecast";
     private static final String DIGITS_SEARCH = "digits";
@@ -316,11 +318,25 @@ public class PocketSphinxActivity extends Activity implements
         captions.put(DIGITS_SEARCH, R.string.digits_caption);
         captions.put(FORECAST_SEARCH, R.string.forecast_caption);
         
-        mTts = new TextToSpeech(this,this);
-		mTts.setLanguage(Locale.US);
-		mTts.setSpeechRate((float)0.9);
+        mTts = new TextToSpeech(this,new OnInitListener() {
+			
+			@Override
+			public void onInit(int status) {
+				// TODO Auto-generated method stub
+				if (status==TextToSpeech.SUCCESS){
+					mTts.setLanguage(Locale.US);
+					mTts.speak("It IS WORKING", TextToSpeech.QUEUE_ADD,null,"test");
+					
+					}else {
+						Log.d("mylog", "ERROR NOT SUCCESS!");
+						
+					}
+			}
+		});
+		//mTts.setLanguage(Locale.US);
+		//mTts.setSpeechRate((float)0.9);
 		
-		mTts.speak("Hello", TextToSpeech.QUEUE_FLUSH, null);
+		//mTts.speak("Hello", TextToSpeech.QUEUE_FLUSH, null,"me1");
         
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         
@@ -404,7 +420,6 @@ public class PocketSphinxActivity extends Activity implements
             		//if (mLikely<40)
             		//Toast.makeText(getApplicationContext(), msg.obj.toString()+"   "+mLikely, Toast.LENGTH_SHORT).show();
             		status.setText(msg.obj.toString()+"   "+mLikely);
-            		
             		if (pred_ind<10){
             			pred_results[pred_ind]=access.getId(msg.obj.toString());
             			pred_ind++;
@@ -416,6 +431,10 @@ public class PocketSphinxActivity extends Activity implements
             			r=(int) Math.floor((double) r/10); 
             			if (r>0){
             			active_person=access.getName(r);
+            			if (!active_person.equals(last_person))
+            			mTts.speak("Hi "+active_person, TextToSpeech.QUEUE_FLUSH, null,"me");
+                		
+            			last_person=active_person;
             			}
             			else {
             				active_person="";
@@ -594,6 +613,7 @@ public class PocketSphinxActivity extends Activity implements
     @Override
     public void onPartialResult(Hypothesis hypothesis) {
         String text = hypothesis.getHypstr();
+        ResultSpeech=text;
         if (text.equals(KEYPHRASE))
             switchSearch(COMMAND_SEARCH);
         else if (text.equals(DIGITS_SEARCH))
@@ -613,18 +633,32 @@ public class PocketSphinxActivity extends Activity implements
       	
     }
     
-    @SuppressLint("NewApi")
 	@Override
     public void onResult(Hypothesis hypothesis) {
         ((TextView) findViewById(R.id.result_text)).setText("");
+        Log.d("mylog", "ONRESULT!");
+        
         if (hypothesis != null) {
+        	
             String text = hypothesis.getHypstr();
             speech_result=text;
+            Log.d("mylog", "R:"+speech_result);
             makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
-            if(speech_result.indexOf("who")>=0){
-            	mTts.speak("As part of a previously mentioned required test protocol, we can no longer lie to you. When the testing is over, you will be missed", TextToSpeech.QUEUE_FLUSH, null,"me");
+            if(speech_result.indexOf("who are you")>=0){
+            	mTts.speak("I am Chibi", TextToSpeech.QUEUE_FLUSH, null,"me");
                 
             }
+            if (speech_result.indexOf("who are you")>-1){
+            	mTts.speak("I am Chibi! I am a robotic guide for safe and efficient Human­Robot interaction. I reside in a tablet but can control the outside peripherals using various interfaces. I will try to make your job safer, more efficient and easier.", TextToSpeech.QUEUE_FLUSH, null,"me");
+                
+            }else if (speech_result.indexOf("where are you")>-1){
+            	mTts.speak("I am currently at Nazarbayev University Technopark", TextToSpeech.QUEUE_FLUSH, null,"me");
+                
+            } else if (speech_result.indexOf("what can you")>-1){
+            	mTts.speak("I can speak, recognize speech, recognize the users that are qualified to work with me and control the manipulator safely", TextToSpeech.QUEUE_FLUSH, null,"me");
+                }else if (speech_result.indexOf("who created you")>-1 || ResultSpeech.indexOf("who made you")>-1){
+                	mTts.speak("I am created by the researchers of Nazarbayev University working at the Advanced Robotics and Mechatronics Systems Laboratory. For further information, you can visit the webpage below” and show the arms.nu.edu.kz webpage on the screen", TextToSpeech.QUEUE_FLUSH, null,"me");
+                    }
             if (speech_result.length()>10){
             if ((!active_person.equals(""))&&(speech_result.indexOf("task")>0))
         	{
@@ -728,7 +762,7 @@ public class PocketSphinxActivity extends Activity implements
                             
         				}
         	}
-        	else {
+        	else if (speech_result.indexOf("task")>-1){
         		mTts.speak("You are not registered", TextToSpeech.QUEUE_FLUSH, null);
                 
         	}
@@ -742,6 +776,11 @@ public class PocketSphinxActivity extends Activity implements
 
     @Override
     public void onEndOfSpeech() {
+    	Log.d("mylog", "R::"+ResultSpeech);
+    	//if (ResultSpeech.indexOf("who")>-1){
+    	//	mTts.speak("I am Chibi", TextToSpeech.QUEUE_FLUSH, null,"me");
+            
+    	//}
         if (DIGITS_SEARCH.equals(recognizer.getSearchName())
                 || FORECAST_SEARCH.equals(recognizer.getSearchName()))
             switchSearch(KWS_SEARCH);
@@ -751,6 +790,8 @@ public class PocketSphinxActivity extends Activity implements
         	
         	switchSearch(KWS_SEARCH);
         }
+        
+        //ResultSpeech="";
     }
 
     private void switchSearch(String searchName) {
