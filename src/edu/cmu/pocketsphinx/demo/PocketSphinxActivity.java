@@ -47,7 +47,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Timer;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
@@ -63,7 +62,6 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.objdetect.CascadeClassifier;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -71,6 +69,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.drawable.AnimationDrawable;
 import android.hardware.Camera;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -79,7 +78,9 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.speech.tts.TextToSpeech;
+import android.speech.tts.UtteranceProgressListener;
 import android.speech.tts.TextToSpeech.OnInitListener;
+import android.speech.tts.TextToSpeech.OnUtteranceCompletedListener;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -237,6 +238,9 @@ public class PocketSphinxActivity extends Activity implements
     private BluetoothChatService mChatService = null;
     private float bl_x=0,bl_y=0;
     
+    private AnimationDrawable animation;
+    private ImageView face;
+    
     private BaseLoaderCallback  mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
@@ -325,7 +329,7 @@ public class PocketSphinxActivity extends Activity implements
 				// TODO Auto-generated method stub
 				if (status==TextToSpeech.SUCCESS){
 					mTts.setLanguage(Locale.US);
-					mTts.speak("It IS WORKING", TextToSpeech.QUEUE_ADD,null,"test");
+					//mTts.speak("It IS WORKING", TextToSpeech.QUEUE_ADD,null,"test");
 					
 					}else {
 						Log.d("mylog", "ERROR NOT SUCCESS!");
@@ -333,6 +337,8 @@ public class PocketSphinxActivity extends Activity implements
 					}
 			}
 		});
+        
+        
 		//mTts.setLanguage(Locale.US);
 		//mTts.setSpeechRate((float)0.9);
 		
@@ -362,7 +368,61 @@ public class PocketSphinxActivity extends Activity implements
         status=(TextView) findViewById(R.id.main_status);
         rect_size_txt=(TextView) findViewById(R.id.main_rect_size);
         buttonChange=(ToggleButton) findViewById(R.id.main_change);
+        face= (ImageView) findViewById(R.id.face_view);
         
+        mTts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+			
+			@Override
+			public void onStart(String utteranceId) {
+				// TODO Auto-generated method stub
+				
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						//face.destroyDrawingCache();
+						animation.stop();
+						face.setBackgroundResource(R.drawable.speaking_face);
+				        animation=(AnimationDrawable) face.getBackground();
+						animation.start();
+					}
+				});
+		 				  
+		 			
+		 		
+		    	 
+			}
+			
+			@Override
+			@Deprecated
+			public void onError(String utteranceId) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onDone(String utteranceId) {
+				// TODO Auto-generated method stub
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						animation.stop();
+						face.setBackgroundResource(R.drawable.normal_face);
+				        animation=(AnimationDrawable) face.getBackground();
+						animation.start();
+					}
+				});
+			}
+		});
+        
+        this.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				face.destroyDrawingCache();
+				face.setBackgroundResource(R.drawable.normal_face);
+		        animation=(AnimationDrawable) face.getBackground();
+				animation.start();
+			}
+		});
         ((TextView) findViewById(R.id.caption_text))
                 .setText("Preparing the recognizer");
         mOpenCvCameraView = (Tutorial3View) findViewById(R.id.tutorial3_activity_java_surface_view);
@@ -579,6 +639,13 @@ public class PocketSphinxActivity extends Activity implements
     }
     
     @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+    	// TODO Auto-generated method stub
+    	super.onWindowFocusChanged(hasFocus);
+    	//animation.start();
+    }
+    
+    @Override
     protected void onStart() {
     	// TODO Auto-generated method stub
     	super.onStart();
@@ -644,20 +711,22 @@ public class PocketSphinxActivity extends Activity implements
             speech_result=text;
             Log.d("mylog", "R:"+speech_result);
             makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
-            if(speech_result.indexOf("who are you")>=0){
-            	mTts.speak("I am Chibi", TextToSpeech.QUEUE_FLUSH, null,"me");
-                
-            }
+
             if (speech_result.indexOf("who are you")>-1){
-            	mTts.speak("I am Chibi! I am a robotic guide for safe and efficient Human­Robot interaction. I reside in a tablet but can control the outside peripherals using various interfaces. I will try to make your job safer, more efficient and easier.", TextToSpeech.QUEUE_FLUSH, null,"me");
-                
+            	//animation.stop();
+ 				//face.destroyDrawingCache();
+ 				//face.setBackgroundResource(R.drawable.speaking_face);
+ 		        //animation=(AnimationDrawable) face.getBackground();
+ 				//animation.start();
+ 				mTts.speak("I am Chibi! I am a robotic guide for safe and efficient Human­Robot interaction. I reside in a tablet but can control the outside peripherals using various interfaces. I will try to make your job safer, more efficient and easier.", TextToSpeech.QUEUE_FLUSH, null,"me");
+                //speak_out("I am Chibi! I am a robotic guide for safe and efficient Human­Robot interaction. I reside in a tablet but can control the outside peripherals using various interfaces. I will try to make your job safer, more efficient and easier.");
             }else if (speech_result.indexOf("where are you")>-1){
             	mTts.speak("I am currently at Nazarbayev University Technopark", TextToSpeech.QUEUE_FLUSH, null,"me");
                 
             } else if (speech_result.indexOf("what can you")>-1){
             	mTts.speak("I can speak, recognize speech, recognize the users that are qualified to work with me and control the manipulator safely", TextToSpeech.QUEUE_FLUSH, null,"me");
                 }else if (speech_result.indexOf("who created you")>-1 || ResultSpeech.indexOf("who made you")>-1){
-                	mTts.speak("I am created by the researchers of Nazarbayev University working at the Advanced Robotics and Mechatronics Systems Laboratory. For further information, you can visit the webpage below” and show the arms.nu.edu.kz webpage on the screen", TextToSpeech.QUEUE_FLUSH, null,"me");
+                	mTts.speak("I am created by the researchers of Nazarbayev University working at the Advanced Robotics and Mechatronics Systems Laboratory.", TextToSpeech.QUEUE_FLUSH, null,"me");
                     }
             if (speech_result.length()>10){
             if ((!active_person.equals(""))&&(speech_result.indexOf("task")>0))
@@ -1216,4 +1285,12 @@ public class PocketSphinxActivity extends Activity implements
             startActivity(discoverableIntent);
         }
     }
+    
+    private void speak_out(String str){
+    	
+    	
+    	 
+    	
+    }
+	
 }

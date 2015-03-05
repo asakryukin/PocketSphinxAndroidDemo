@@ -1,9 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
     android:padding="16dp" >
+
+    <edu.cmu.pocketsphinx.demo.Tutorial3View
+        android:id="@+id/tutorial3_activity_java_surface_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="0.88" />
+
+    <ImageView
+        android:id="@+id/imageView_IV"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:src="@drawable/icon"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@android:color/white"
+        android:backgroundTint="@android:color/white"
+        android:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/face_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@drawable/normal0001"
+        android:minHeight="1280dp"
+        android:minWidth="800dp"
+        android:visibility="visible" />
 
     <TextView
         android:id="@+id/caption_text"
@@ -12,11 +42,6 @@
         android:layout_gravity="center_horizontal"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:typeface="sans" />
-	<edu.cmu.pocketsphinx.demo.Tutorial3View
-                    android:id="@+id/tutorial3_activity_java_surface_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.88" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -60,17 +85,12 @@
             android:layout_height="wrap_content"
             android:text="Train" />
 
-    
-
         <EditText
             android:id="@+id/main_name"
-            android:layout_width="wrap_content"
+            android:layout_width="92dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:ems="10"
             android:inputType="textPersonName" >
-
-            <requestFocus />
         </EditText>
         <ToggleButton
             android:id="@+id/main_grab"
@@ -83,13 +103,7 @@
         android:layout_height="wrap_content"
         android:text="SEARCH" />
     </LinearLayout>
-	
-    <ImageView
-        android:id="@+id/imageView_IV"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@drawable/icon" />
 
     
 
-</LinearLayout>
+</RelativeLayout>
