@@ -243,12 +243,6 @@ public class PocketSphinxActivity extends Activity implements
     private AnimationDrawable animation;
     private ImageView face;
     
-    static {
-        if (!OpenCVLoader.initDebug()) {
-            // Handle initialization error
-        }
-    }
-    
     private BaseLoaderCallback  mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
@@ -714,7 +708,7 @@ public class PocketSphinxActivity extends Activity implements
     {
         super.onResume();
         //OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_9, this, mLoaderCallback);
-       //OpenCVLoader.initDebug();
+       OpenCVLoader.initDebug();
       	
     }
     
