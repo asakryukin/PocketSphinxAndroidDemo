@@ -1,3 +1,4 @@
+
 /* ====================================================================
  * Copyright (c) 2014 Alpha Cephei Inc.  All rights reserved.
  *
@@ -72,7 +73,6 @@ import android.graphics.Canvas;
 import android.graphics.drawable.AnimationDrawable;
 import android.hardware.Camera;
 import android.media.MediaPlayer;
-import android.opengl.Visibility;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -707,8 +707,8 @@ public class PocketSphinxActivity extends Activity implements
     public void onResume()
     {
         super.onResume();
-        //OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_9, this, mLoaderCallback);
-       OpenCVLoader.initDebug();
+       OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_8, this, mLoaderCallback);
+       //OpenCVLoader.initDebug();
       	
     }
     
