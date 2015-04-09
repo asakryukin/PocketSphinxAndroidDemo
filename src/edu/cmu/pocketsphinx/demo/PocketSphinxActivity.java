@@ -71,6 +71,8 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.AnimationDrawable;
 import android.hardware.Camera;
+import android.media.MediaPlayer;
+import android.opengl.Visibility;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -78,9 +80,8 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.speech.tts.TextToSpeech;
-import android.speech.tts.UtteranceProgressListener;
 import android.speech.tts.TextToSpeech.OnInitListener;
-import android.speech.tts.TextToSpeech.OnUtteranceCompletedListener;
+import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -134,6 +135,7 @@ public class PocketSphinxActivity extends Activity implements
     private static final int frontCam =1;
     private static final int backCam =2;
     	    		
+    
     
     private int faceState=IDLE;
 //    private int countTrain=0;
@@ -199,7 +201,7 @@ public class PocketSphinxActivity extends Activity implements
     private int not_defined_number=0;
     private String speech_result="";
     private Socket socket;
-    
+    private MediaPlayer mp;
     // for bluetooth
  // Debugging
    // private static final String TAG = "BluetoothChat";
@@ -322,6 +324,10 @@ public class PocketSphinxActivity extends Activity implements
         captions.put(DIGITS_SEARCH, R.string.digits_caption);
         captions.put(FORECAST_SEARCH, R.string.forecast_caption);
         
+        mp = MediaPlayer.create(this, R.raw.beep);
+        
+        
+        
         mTts = new TextToSpeech(this,new OnInitListener() {
 			
 			@Override
@@ -337,7 +343,7 @@ public class PocketSphinxActivity extends Activity implements
 					}
 			}
 		});
-        
+       
         
 		//mTts.setLanguage(Locale.US);
 		//mTts.setSpeechRate((float)0.9);
@@ -548,6 +554,8 @@ public class PocketSphinxActivity extends Activity implements
         toggleButtonTrain.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				if (toggleButtonTrain.isChecked()) {
+					//toggleButtonGrabar.setVisibility(0);
+					
 					/*
 					textState.setText(getResources().getString(R.string.SEnter));
 					buttonSearch.setVisibility(View.INVISIBLE);
@@ -562,6 +570,8 @@ public class PocketSphinxActivity extends Activity implements
 					*/
 
 				} else {
+					//toggleButtonGrabar.setVisibility(2);
+					
 					/*
 					textState.setText(R.string.Straininig); 
 					textresult.setText("");
@@ -681,8 +691,10 @@ public class PocketSphinxActivity extends Activity implements
     public void onPartialResult(Hypothesis hypothesis) {
         String text = hypothesis.getHypstr();
         ResultSpeech=text;
-        if (text.equals(KEYPHRASE))
+        if (text.equals(KEYPHRASE)){
             switchSearch(COMMAND_SEARCH);
+            mp.start();
+        }
         else if (text.equals(DIGITS_SEARCH))
             switchSearch(DIGITS_SEARCH);
         else if (text.equals(FORECAST_SEARCH))
@@ -695,8 +707,8 @@ public class PocketSphinxActivity extends Activity implements
     public void onResume()
     {
         super.onResume();
-        OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_9, this, mLoaderCallback);
-       
+        //OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_9, this, mLoaderCallback);
+       OpenCVLoader.initDebug();
       	
     }
     
@@ -734,13 +746,13 @@ public class PocketSphinxActivity extends Activity implements
         		if (speech_result.indexOf("one")>-1){
         			if (access.isAllowed(active_person, 1)){
         				mTts.speak("Executing task one", TextToSpeech.QUEUE_FLUSH, null);
-        				/*try {
+        				try {
 							PrintWriter out= new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())),true);
 							out.println("Start");
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
-						}*/
+						}
         				Thread thread=new Thread(new Runnable() {
         					
         					@Override
@@ -777,13 +789,13 @@ public class PocketSphinxActivity extends Activity implements
         			if (speech_result.indexOf("two")>-1){
         				if (access.isAllowed(active_person, 2)){
             				mTts.speak("Executing task two", TextToSpeech.QUEUE_FLUSH, null);
-            				/*try {
+            				try {
     							PrintWriter out= new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())),true);
     							out.println("Start");
     						} catch (IOException e) {
     							// TODO Auto-generated catch block
     							e.printStackTrace();
-    						}*/
+    						}
             				Thread thread=new Thread(new Runnable() {
             					
             					@Override
@@ -1083,6 +1095,7 @@ public class PocketSphinxActivity extends Activity implements
 					data[index][0]=bl_x;
 					data[index][1]=bl_y;
 					index++;
+					sendMessage("x"+( Math.round(bl_x))+"y"+( Math.round(bl_y))+"$");
 					
 				}else{
 					float[] xs=new float[5];
@@ -1105,7 +1118,7 @@ public class PocketSphinxActivity extends Activity implements
 					Arrays.sort(distance);
 					*/
 					
-					sendMessage("x"+( Math.round(mx))+"y"+( Math.round(my))+"$");
+					Toast.makeText(getApplicationContext(), "x"+( Math.round(mx))+"y"+( Math.round(my))+"$", Toast.LENGTH_SHORT).show();
 					index=0;
 				}
 				
@@ -1133,7 +1146,7 @@ public class PocketSphinxActivity extends Activity implements
 	private void sendMessage(String message) {
         // Check that we're actually connected before trying anything
         if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
-            Toast.makeText(this, R.string.not_connected, Toast.LENGTH_SHORT).show();
+           // Toast.makeText(this, R.string.not_connected, Toast.LENGTH_SHORT).show();
             return;
         }
         
