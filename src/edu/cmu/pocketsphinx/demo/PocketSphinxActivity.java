@@ -386,8 +386,9 @@ public class PocketSphinxActivity extends Activity implements
 					@Override
 					public void run() {
 						//face.destroyDrawingCache();
+						
 						animation.stop();
-						face.setBackgroundResource(R.drawable.speaking_face);
+						face.setBackgroundResource( R.drawable.speaking_face);
 				        animation=(AnimationDrawable) face.getBackground();
 						animation.start();
 					}
@@ -498,7 +499,7 @@ public class PocketSphinxActivity extends Activity implements
             			if (r>0){
             			active_person=access.getName(r);
             			if (!active_person.equals(last_person))
-            			mTts.speak("Hi "+active_person, TextToSpeech.QUEUE_FLUSH, null,"me");
+            			//mTts.speak("Hi "+active_person, TextToSpeech.QUEUE_FLUSH, null,"me");
                 		
             			last_person=active_person;
             			}
@@ -707,8 +708,8 @@ public class PocketSphinxActivity extends Activity implements
     public void onResume()
     {
         super.onResume();
-        //OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_9, this, mLoaderCallback);
-       OpenCVLoader.initDebug();
+       OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_8, this, mLoaderCallback);
+       //OpenCVLoader.initDebug();
       	
     }
     
@@ -730,15 +731,15 @@ public class PocketSphinxActivity extends Activity implements
  				//face.setBackgroundResource(R.drawable.speaking_face);
  		        //animation=(AnimationDrawable) face.getBackground();
  				//animation.start();
- 				mTts.speak("I am Chibi! I am a robotic guide for safe and efficient Human­Robot interaction. I reside in a tablet but can control the outside peripherals using various interfaces. I will try to make your job safer, more efficient and easier.", TextToSpeech.QUEUE_FLUSH, null,"me");
+ 				//mTts.speak("I am Chibi! I am a robotic guide for safe and efficient Human­Robot interaction. I reside in a tablet but can control the outside peripherals using various interfaces. I will try to make your job safer, more efficient and easier.", TextToSpeech.QUEUE_FLUSH, null,"me");
                 //speak_out("I am Chibi! I am a robotic guide for safe and efficient Human­Robot interaction. I reside in a tablet but can control the outside peripherals using various interfaces. I will try to make your job safer, more efficient and easier.");
             }else if (speech_result.indexOf("where are you")>-1){
-            	mTts.speak("I am currently at Nazarbayev University Technopark", TextToSpeech.QUEUE_FLUSH, null,"me");
+            //	mTts.speak("I am currently at Nazarbayev University Technopark", TextToSpeech.QUEUE_FLUSH, null,"me");
                 
             } else if (speech_result.indexOf("what can you")>-1){
-            	mTts.speak("I can speak, recognize speech, recognize the users that are qualified to work with me and control the manipulator safely", TextToSpeech.QUEUE_FLUSH, null,"me");
+            //	mTts.speak("I can speak, recognize speech, recognize the users that are qualified to work with me and control the manipulator safely", TextToSpeech.QUEUE_FLUSH, null,"me");
                 }else if (speech_result.indexOf("who created you")>-1 || ResultSpeech.indexOf("who made you")>-1){
-                	mTts.speak("I am created by the researchers of Nazarbayev University working at the Advanced Robotics and Mechatronics Systems Laboratory.", TextToSpeech.QUEUE_FLUSH, null,"me");
+               // 	mTts.speak("I am created by the researchers of Nazarbayev University working at the Advanced Robotics and Mechatronics Systems Laboratory.", TextToSpeech.QUEUE_FLUSH, null,"me");
                     }
             if (speech_result.length()>10){
             if ((!active_person.equals(""))&&(speech_result.indexOf("task")>0))
