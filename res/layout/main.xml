@@ -40,11 +40,11 @@
 
     <ImageView
         android:id="@+id/imageView_IV"
-        android:src="@android:color/white"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:background="@android:color/white"
-        android:visibility="gone" />
+        android:backgroundTint="@android:color/white"
+        android:visibility="invisible" />
 
     <ImageView
         android:id="@+id/face_view"
