@@ -12,15 +12,6 @@
         android:layout_weight="0.88" />
 
     <TextView
-        android:id="@+id/main_rect_size"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1.2"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@android:color/black"
-        android:visibility="gone" />
-
-    <TextView
         android:id="@+id/caption_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -44,7 +35,7 @@
         android:layout_height="fill_parent"
         android:background="@android:color/white"
         android:backgroundTint="@android:color/white"
-        android:visibility="invisible" />
+        android:visibility="visible" />
 
     <ImageView
         android:id="@+id/face_view"
@@ -109,7 +100,25 @@
             android:text="SEARCH"
             android:textOff="RUN" 
             android:textOn="Running"/>
+        <ToggleButton
+            android:id="@+id/main_background"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Back"
+            android:textOff="Back" 
+            android:textOn="Back"/>
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/main_rect_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_weight="1.2"
+        android:text="AREA"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@android:color/black"
+        android:visibility="visible" />
 
     <TextView
         android:id="@+id/main_status"

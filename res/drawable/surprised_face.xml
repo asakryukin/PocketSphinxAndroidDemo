@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item
+        android:drawable="@drawable/su-0"
+        android:duration="100"/>
+    <item
+        android:drawable="@drawable/su-1"
+        android:duration="100"/>
+    <item
+        android:drawable="@drawable/su-2"
+        android:duration="100"/>
+    <item
+        android:drawable="@drawable/su-3"
+        android:duration="100"/>
+    <item
+        android:drawable="@drawable/su-4"
+        android:duration="100"/>
+    <item
+        android:drawable="@drawable/su-5"
+        android:duration="100"/>
+    <item
+        android:drawable="@drawable/su-6"
+        android:duration="100"/>
+    <item
+        android:drawable="@drawable/su-7"
+        android:duration="100"/>
+    <item
+        android:drawable="@drawable/su-8"
+        android:duration="100"/>
+    <item
+        android:drawable="@drawable/su-9"
+        android:duration="100"/>
+    <item
+        android:drawable="@drawable/su-10"
+        android:duration="100"/>
+    <item
+        android:drawable="@drawable/su-11"
+        android:duration="100"/>
+    <item
+        android:drawable="@drawable/su-12"
+        android:duration="100"/>
+    <item
+        android:drawable="@drawable/su-13"
+        android:duration="100"/>
+    <item
+        android:drawable="@drawable/su-14"
+        android:duration="100"/>
+    <item
+        android:drawable="@drawable/su-15"
+        android:duration="100"/>
+    <item
+        android:drawable="@drawable/su-16"
+        android:duration="100"/>
+    <item
+        android:drawable="@drawable/su-17"
+        android:duration="100"/>
+    <item
+        android:drawable="@drawable/su-18"
+        android:duration="100"/>
+    <item
+        android:drawable="@drawable/su-19"
+        android:duration="100"/>
+
+
+</animation-list>
