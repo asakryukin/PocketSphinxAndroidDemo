@@ -10,5 +10,4 @@ grammar menu;
 <grid>= (grid) (row) (<numbers>) (column) (<numbers>);
 <move> = (move) (<object>) (((towards) (<grid>)) | ((<preposition>) (<object>)));
 <go to> = (goto) (((position) (<numbers>))|(<object>)) [ ((via)|(through)) ((<grid>)|(<object>)) ];
-<execute> = (execute) (task) (one|two);
-public <item> =  (<execute>);
+public <item> =  (<go to>)|(<move>) | ((who) (are) (you))| ((where) (are) (you))| ((who) (made|created) you) | ((what) (can) (you) (do));

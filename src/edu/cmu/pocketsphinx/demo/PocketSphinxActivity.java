@@ -47,7 +47,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Timer;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
@@ -63,7 +62,6 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.objdetect.CascadeClassifier;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -74,6 +72,7 @@ import android.graphics.Canvas;
 import android.graphics.drawable.AnimationDrawable;
 import android.hardware.Camera;
 import android.media.MediaPlayer;
+import android.opengl.Visibility;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -124,9 +123,6 @@ public class PocketSphinxActivity extends Activity implements
     private final static String DEBUG_TAG = "MakePhotoActivity";
     private Camera camera;
     private int cameraId = 0;
-    private int callnumber=0;
-    private String sending_message="   ";
-    private boolean running=true;
    
    private static final Scalar    FACE_RECT_COLOR     = new Scalar(0, 255, 0, 255);
     public static final int        JAVA_DETECTOR       = 0;
@@ -139,7 +135,7 @@ public class PocketSphinxActivity extends Activity implements
     private static final int frontCam =1;
     private static final int backCam =2;
     	    		
-    private boolean ifclose=true;
+    
     
     private int faceState=IDLE;
 //    private int countTrain=0;
@@ -154,7 +150,6 @@ public class PocketSphinxActivity extends Activity implements
     private MenuItem               mFrontCam;
     private MenuItem               mEigen;
     
-    private Socket_Connection sconn;
 
     private Mat                    mRgba;
     private Mat                    mGray;
@@ -184,7 +179,7 @@ public class PocketSphinxActivity extends Activity implements
     private Access_Manager access;
     
     PersonRecognizer fr;
-    ToggleButton toggleButtonGrabar,toggleButtonTrain,buttonSearch,buttonChange,toggleback;
+    ToggleButton toggleButtonGrabar,toggleButtonTrain,buttonSearch,buttonChange;
     Button buttonCatalog,train,search;
     ImageView ivGreen,ivYellow,ivRed; 
     ImageButton imCamera;
@@ -200,11 +195,12 @@ public class PocketSphinxActivity extends Activity implements
     
     labels labelsFile;
     
-    private int[] pred_results=new int[7];
+    private int[] pred_results=new int[10];
     private int pred_ind=0;
     private String active_person="";
     private int not_defined_number=0;
     private String speech_result="";
+    private Socket socket;
     private MediaPlayer mp;
     // for bluetooth
  // Debugging
@@ -268,7 +264,6 @@ public class PocketSphinxActivity extends Activity implements
                     try {
                         // load cascade file from application resources
                         InputStream is = getResources().openRawResource(R.raw.lbpcascade_frontalface);
-                       
                         File cascadeDir = getDir("cascade", Context.MODE_PRIVATE);
                         mCascadeFile = new File(cascadeDir, "lbpcascade.xml");
                         FileOutputStream os = new FileOutputStream(mCascadeFile);
@@ -323,11 +318,6 @@ public class PocketSphinxActivity extends Activity implements
         mDetectorName[JAVA_DETECTOR] = "Java";
         mDetectorName[NATIVE_DETECTOR] = "Native (tracking)";*/
         // Prepare the data for UI
-        
-     // Show status bar
-        //getWindow().clearFlags(WindowManager.LayoutParams.flag);
-        ActionBar actionBar = getActionBar();
-        actionBar.show();
         captions = new HashMap<String, Integer>();
         captions.put(KWS_SEARCH, R.string.kws_caption);
         captions.put(COMMAND_SEARCH, R.string.menu_caption);
@@ -336,9 +326,8 @@ public class PocketSphinxActivity extends Activity implements
         
         mp = MediaPlayer.create(this, R.raw.beep);
         
-       
-		//sconn=new Socket_Connection();
-        //sconn.execute("   ");
+        
+        
         mTts = new TextToSpeech(this,new OnInitListener() {
 			
 			@Override
@@ -380,26 +369,12 @@ public class PocketSphinxActivity extends Activity implements
         text=(EditText) findViewById(R.id.main_name);
         toggleButtonTrain=(ToggleButton)findViewById(R.id.main_train);
         toggleButtonGrabar=(ToggleButton)findViewById(R.id.main_grab);
-        toggleback=(ToggleButton)findViewById(R.id.main_background);
         Iv=(ImageView) findViewById(R.id.imageView_IV);
         buttonSearch=(ToggleButton) findViewById(R.id.main_search);
         status=(TextView) findViewById(R.id.main_status);
         rect_size_txt=(TextView) findViewById(R.id.main_rect_size);
         buttonChange=(ToggleButton) findViewById(R.id.main_change);
         face= (ImageView) findViewById(R.id.face_view);
-        
-toggleback.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				if (toggleback.isChecked()){
-					Iv.setVisibility(View.VISIBLE);
-				}else{
-					Iv.setVisibility(View.INVISIBLE);
-				}
-			}
-		});
         
         mTts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
 			
@@ -496,75 +471,10 @@ toggleback.setOnClickListener(new OnClickListener() {
                  canvas.setBitmap(mBitmap);
                  rect_size_txt.setText("Width:"+mBitmap.getWidth()+"  Height:"+mBitmap.getHeight()+"  Area:"+(mBitmap.getWidth()*mBitmap.getHeight()));
                  
-                 if (mBitmap.getWidth()*mBitmap.getHeight()<20000){
-                	 Thread thread=new Thread(new Runnable() {
-     					
-     					@Override
-     					public void run() {
-     						// TODO Auto-generated method stub
-     						Log.d("mySocket", "Before");
-     				        try {
-     				        	InetAddress servadr=InetAddress.getByName("192.168.43.153");
-     							Socket socket = new Socket(servadr, 8080);
-     							Log.d("mySocket", "After in try");
-     							try {
-     								PrintWriter out= new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())),true);
-     								out.println("stop");
-     								socket.close();
-     							} catch (IOException e) {
-     								// TODO Auto-generated catch block
-     							}
-     							
-     						} catch (UnknownHostException e) {
-     							// TODO Auto-generated catch block
-     							e.printStackTrace();
-     						} catch (IOException e) {
-     							// TODO Auto-generated catch block
-     							e.printStackTrace();
-     						}
-     					}
-     				});
-     		        
-     		        thread.start();
-     		        ifclose=true;
-                 }
-                 if(mBitmap.getWidth()*mBitmap.getHeight()>30000 ){
-                	 Thread thread=new Thread(new Runnable() {
-     					
-     					@Override
-     					public void run() {
-     						// TODO Auto-generated method stub
-     						Log.d("mySocket", "Before");
-     				        try {
-     				        	InetAddress servadr=InetAddress.getByName("192.168.43.153");
-     							Socket socket = new Socket(servadr, 8080);
-     							Log.d("mySocket", "After in try");
-     							try {
-     								PrintWriter out= new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())),true);
-     								out.println("start");
-     								socket.close();
-     							} catch (IOException e) {
-     								// TODO Auto-generated catch block
-     							}
-     							
-     						} catch (UnknownHostException e) {
-     							// TODO Auto-generated catch block
-     							e.printStackTrace();
-     						} catch (IOException e) {
-     							// TODO Auto-generated catch block
-     							e.printStackTrace();
-     						}
-     					}
-     				});
-     		        
-     		        thread.start();
-     		        ifclose=false;
-                 }
-                 
                  //if (mBitmap.getWidth()>270)
                 //	 mTts.speak("You are too close, go away", TextToSpeech.QUEUE_FLUSH, null);
                  
-                 //Iv.setImageBitmap(mBitmap);
+                 Iv.setImageBitmap(mBitmap);
                  if (countImages>=MAXIMG-1)
                  {
                 	 toggleButtonGrabar.setChecked(false);
@@ -576,15 +486,15 @@ toggleback.setOnClickListener(new OnClickListener() {
             		//if (mLikely<40)
             		//Toast.makeText(getApplicationContext(), msg.obj.toString()+"   "+mLikely, Toast.LENGTH_SHORT).show();
             		status.setText(msg.obj.toString()+"   "+mLikely);
-            		if (pred_ind<7){
+            		if (pred_ind<10){
             			pred_results[pred_ind]=access.getId(msg.obj.toString());
             			pred_ind++;
             		}else{
             			int r=0;
-            			for(int i=0;i<7;i++){
+            			for(int i=0;i<10;i++){
             				r=r+pred_results[i];
             			}
-            			r=(int) Math.floor((double) r/7); 
+            			r=(int) Math.floor((double) r/10); 
             			if (r>0){
             			active_person=access.getName(r);
             			if (!active_person.equals(last_person))
@@ -641,8 +551,6 @@ toggleback.setOnClickListener(new OnClickListener() {
 			}
 		});
         
-        
-        
         toggleButtonTrain.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				if (toggleButtonTrain.isChecked()) {
@@ -697,8 +605,6 @@ toggleback.setOnClickListener(new OnClickListener() {
         buttonSearch.setOnClickListener(new View.OnClickListener() {
 
  			public void onClick(View v) {
- 				ActionBar actionBar = getActionBar();
- 		        actionBar.hide();
  				if (buttonSearch.isChecked())
  				{
  					if (!fr.canPredict())
@@ -786,69 +692,6 @@ toggleback.setOnClickListener(new OnClickListener() {
         String text = hypothesis.getHypstr();
         ResultSpeech=text;
         if (text.equals(KEYPHRASE)){
-        	runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					
-					if(callnumber==0){
-						CountDownTimer cn=new CountDownTimer(5000,2900) {
-							private boolean ff=false;
-							@Override
-							public void onFinish() {
-								// TODO Auto-generated method stub
-								animation.stop();
-								face.setBackgroundResource(R.drawable.normal_face);
-						        animation=(AnimationDrawable) face.getBackground();
-								animation.start();
-							}
-
-							@Override
-							public void onTick(long millisUntilFinished) {
-								// TODO Auto-generated method stub
-								if(!ff){
-								animation.stop();
-								face.setBackgroundResource(R.drawable.surprised_face);
-						        animation=(AnimationDrawable) face.getBackground();
-						        animation.start();
-						        ff=true;
-								}
-							}
-						};
-					cn.start();
-					
-					
-					callnumber=1;
-					}else {
-						sendMessage("1");
-						CountDownTimer cn=new CountDownTimer(3900,1000) {
-							private boolean ff=false;
-							@Override
-							public void onFinish() {
-								// TODO Auto-generated method stub
-								animation.stop();
-								face.setBackgroundResource(R.drawable.normal_face);
-						        animation=(AnimationDrawable) face.getBackground();
-								animation.start();
-							}
-
-							@Override
-							public void onTick(long millisUntilFinished) {
-								// TODO Auto-generated method stub
-								if(!ff){
-								animation.stop();
-								face.setBackgroundResource(R.drawable.happy_face);
-						        animation=(AnimationDrawable) face.getBackground();
-						        animation.start();
-						        ff=true;
-						        }
-							}
-						};
-					cn.start();
-					
-					callnumber=0;
-					}
-				}
-			});
             switchSearch(COMMAND_SEARCH);
             mp.start();
         }
@@ -864,8 +707,8 @@ toggleback.setOnClickListener(new OnClickListener() {
     public void onResume()
     {
         super.onResume();
-       OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_9, this, mLoaderCallback);
-       //OpenCVLoader.initDebug();
+        //OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_9, this, mLoaderCallback);
+       OpenCVLoader.initDebug();
       	
     }
     
@@ -882,9 +725,6 @@ toggleback.setOnClickListener(new OnClickListener() {
             makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
 
             if (speech_result.indexOf("who are you")>-1){
-            	
-            	//sending_message="task 1";
-            	//out.println("task 1");
             	//animation.stop();
  				//face.destroyDrawingCache();
  				//face.setBackgroundResource(R.drawable.speaking_face);
@@ -906,6 +746,13 @@ toggleback.setOnClickListener(new OnClickListener() {
         		if (speech_result.indexOf("one")>-1){
         			if (access.isAllowed(active_person, 1)){
         				mTts.speak("Executing task one", TextToSpeech.QUEUE_FLUSH, null);
+        				try {
+							PrintWriter out= new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())),true);
+							out.println("Start");
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
         				Thread thread=new Thread(new Runnable() {
         					
         					@Override
@@ -913,37 +760,7 @@ toggleback.setOnClickListener(new OnClickListener() {
         						// TODO Auto-generated method stub
         						Log.d("mySocket", "Before");
         				        try {
-        				        	InetAddress servadr=InetAddress.getByName("192.168.43.153");
-        							Socket socket = new Socket(servadr, 8080);
-        							Log.d("mySocket", "After in try");
-        							try {
-        								PrintWriter out= new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())),true);
-        								out.println("task 1");
-        							} catch (IOException e) {
-        								// TODO Auto-generated catch block
-        							}
-        							
-        						} catch (UnknownHostException e) {
-        							// TODO Auto-generated catch block
-        							e.printStackTrace();
-        						} catch (IOException e) {
-        							// TODO Auto-generated catch block
-        							e.printStackTrace();
-        						}
-        					}
-        				});
-        		        
-        		        thread.start();
-							//out.println("Start");
-							/*
-        				Thread thread=new Thread(new Runnable() {
-        					
-        					@Override
-        					public void run() {
-        						// TODO Auto-generated method stub
-        						Log.d("mySocket", "Before");
-        				        try {
-        				        	InetAddress servadr=InetAddress.getByName("192.168.43.153");
+        				        	InetAddress servadr=InetAddress.getByName("192.168.137.1");
         							Socket socket = new Socket(servadr, 8888);
         							Log.d("mySocket", "After in try");
         							try {
@@ -963,7 +780,7 @@ toggleback.setOnClickListener(new OnClickListener() {
         					}
         				});
         		        
-        		        thread.start();*/
+        		        thread.start();
         			}else {
         				mTts.speak("You have no acces for the task,"+active_person, TextToSpeech.QUEUE_FLUSH, null);
                         
@@ -972,35 +789,7 @@ toggleback.setOnClickListener(new OnClickListener() {
         			if (speech_result.indexOf("two")>-1){
         				if (access.isAllowed(active_person, 2)){
             				mTts.speak("Executing task two", TextToSpeech.QUEUE_FLUSH, null);
-            				Thread thread=new Thread(new Runnable() {
-            					
-            					@Override
-            					public void run() {
-            						// TODO Auto-generated method stub
-            						Log.d("mySocket", "Before");
-            				        try {
-            				        	InetAddress servadr=InetAddress.getByName("192.168.43.153");
-            							Socket socket = new Socket(servadr, 8080);
-            							Log.d("mySocket", "After in try");
-            							try {
-            								PrintWriter out= new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())),true);
-            								out.println("task 2");
-            							} catch (IOException e) {
-            								// TODO Auto-generated catch block
-            							}
-            							
-            						} catch (UnknownHostException e) {
-            							// TODO Auto-generated catch block
-            							e.printStackTrace();
-            						} catch (IOException e) {
-            							// TODO Auto-generated catch block
-            							e.printStackTrace();
-            						}
-            					}
-            				});
-            		        
-            		        thread.start();
-            				/*try {
+            				try {
     							PrintWriter out= new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())),true);
     							out.println("Start");
     						} catch (IOException e) {
@@ -1014,7 +803,7 @@ toggleback.setOnClickListener(new OnClickListener() {
             						// TODO Auto-generated method stub
             						Log.d("mySocket", "Before");
             				        try {
-            				        	InetAddress servadr=InetAddress.getByName("192.168.43.153");
+            				        	InetAddress servadr=InetAddress.getByName("192.168.137.1");
             							Socket socket = new Socket(servadr, 8888);
             							
             							Log.d("mySocket", "After in try");
@@ -1035,7 +824,7 @@ toggleback.setOnClickListener(new OnClickListener() {
             					}
             				});
             		        
-            		        thread.start();*/
+            		        thread.start();
             			}else {
             				mTts.speak("You have no acces for the task,"+active_person, TextToSpeech.QUEUE_FLUSH, null);
                             
@@ -1267,17 +1056,15 @@ toggleback.setOnClickListener(new OnClickListener() {
         	mTts.stop();
         	mTts.shutdown();
         }
-        /*try {
+        try {
 			socket.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        */
+        
         if (mChatService != null) mChatService.stop();
         if(D) Log.e(TAG, "--- ON DESTROY ---");
-        
-        running=false;
         super.onDestroy();
     }
 	
@@ -1308,7 +1095,7 @@ toggleback.setOnClickListener(new OnClickListener() {
 					data[index][0]=bl_x;
 					data[index][1]=bl_y;
 					index++;
-					//sendMessage("x"+( Math.round(bl_x))+"y"+( Math.round(bl_y))+"$");
+					sendMessage("x"+( Math.round(bl_x))+"y"+( Math.round(bl_y))+"$");
 					
 				}else{
 					float[] xs=new float[5];
@@ -1516,51 +1303,6 @@ toggleback.setOnClickListener(new OnClickListener() {
     	
     	
     	 
-    	
-    }
-    
-    private class Socket_Connection extends AsyncTask<String, Void, Void>{
-    	
-    	private InetAddress servadr;
-    	private Socket socket;
-    	private PrintWriter out;
-    	
-    	public Socket_Connection() {
-			// TODO Auto-generated constructor stub
-    		
-		}
-    	
-    	@Override
-    	protected Void doInBackground(String... params) {
-    		// TODO Auto-generated method stub
-    		try {
-				servadr=InetAddress.getByName("192.168.43.153");
-				socket = new Socket(servadr, 8080);
-				out= new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())),true);
-				out.println("start");
-				
-				while(running){
-					if(sending_message.equalsIgnoreCase("   ")){
-						out.println(sending_message);
-					}else{
-						Log.d("mylog", sending_message);
-						out.println(sending_message);
-						sending_message="   ";
-					}
-					
-				}
-				
-				socket.close();
-			} catch (UnknownHostException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-    		return null;
-    	}
     	
     }
 	
