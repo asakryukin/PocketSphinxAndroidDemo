@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Timer;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
@@ -62,7 +63,6 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.objdetect.CascadeClassifier;
 
-import android.R;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -74,7 +74,6 @@ import android.graphics.Canvas;
 import android.graphics.drawable.AnimationDrawable;
 import android.hardware.Camera;
 import android.media.MediaPlayer;
-import android.opengl.Visibility;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -125,7 +124,7 @@ public class PocketSphinxActivity extends Activity implements
     private final static String DEBUG_TAG = "MakePhotoActivity";
     private Camera camera;
     private int cameraId = 0;
-    
+    private int callnumber=0;
     private String sending_message="   ";
     private boolean running=true;
    
@@ -269,6 +268,7 @@ public class PocketSphinxActivity extends Activity implements
                     try {
                         // load cascade file from application resources
                         InputStream is = getResources().openRawResource(R.raw.lbpcascade_frontalface);
+                       
                         File cascadeDir = getDir("cascade", Context.MODE_PRIVATE);
                         mCascadeFile = new File(cascadeDir, "lbpcascade.xml");
                         FileOutputStream os = new FileOutputStream(mCascadeFile);
@@ -789,10 +789,64 @@ toggleback.setOnClickListener(new OnClickListener() {
         	runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					animation.stop();
-					face.setBackgroundResource(R.drawable.);
-			        animation=(AnimationDrawable) face.getBackground();
-					animation.start();
+					
+					if(callnumber==0){
+						CountDownTimer cn=new CountDownTimer(5000,2900) {
+							private boolean ff=false;
+							@Override
+							public void onFinish() {
+								// TODO Auto-generated method stub
+								animation.stop();
+								face.setBackgroundResource(R.drawable.normal_face);
+						        animation=(AnimationDrawable) face.getBackground();
+								animation.start();
+							}
+
+							@Override
+							public void onTick(long millisUntilFinished) {
+								// TODO Auto-generated method stub
+								if(!ff){
+								animation.stop();
+								face.setBackgroundResource(R.drawable.surprised_face);
+						        animation=(AnimationDrawable) face.getBackground();
+						        animation.start();
+						        ff=true;
+								}
+							}
+						};
+					cn.start();
+					
+					
+					callnumber=1;
+					}else {
+						sendMessage("1");
+						CountDownTimer cn=new CountDownTimer(3900,1000) {
+							private boolean ff=false;
+							@Override
+							public void onFinish() {
+								// TODO Auto-generated method stub
+								animation.stop();
+								face.setBackgroundResource(R.drawable.normal_face);
+						        animation=(AnimationDrawable) face.getBackground();
+								animation.start();
+							}
+
+							@Override
+							public void onTick(long millisUntilFinished) {
+								// TODO Auto-generated method stub
+								if(!ff){
+								animation.stop();
+								face.setBackgroundResource(R.drawable.happy_face);
+						        animation=(AnimationDrawable) face.getBackground();
+						        animation.start();
+						        ff=true;
+						        }
+							}
+						};
+					cn.start();
+					
+					callnumber=0;
+					}
 				}
 			});
             switchSearch(COMMAND_SEARCH);
@@ -1254,7 +1308,7 @@ toggleback.setOnClickListener(new OnClickListener() {
 					data[index][0]=bl_x;
 					data[index][1]=bl_y;
 					index++;
-					sendMessage("x"+( Math.round(bl_x))+"y"+( Math.round(bl_y))+"$");
+					//sendMessage("x"+( Math.round(bl_x))+"y"+( Math.round(bl_y))+"$");
 					
 				}else{
 					float[] xs=new float[5];

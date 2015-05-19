@@ -1,65 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 <animation-list xmlns:android="http://schemas.android.com/apk/res/android" >
     <item
-        android:drawable="@drawable/su-0"
+        android:drawable="@drawable/su0"
         android:duration="100"/>
     <item
-        android:drawable="@drawable/su-1"
+        android:drawable="@drawable/su1"
         android:duration="100"/>
     <item
-        android:drawable="@drawable/su-2"
+        android:drawable="@drawable/su2"
         android:duration="100"/>
     <item
-        android:drawable="@drawable/su-3"
+        android:drawable="@drawable/su3"
         android:duration="100"/>
     <item
-        android:drawable="@drawable/su-4"
+        android:drawable="@drawable/su4"
         android:duration="100"/>
     <item
-        android:drawable="@drawable/su-5"
+        android:drawable="@drawable/su5"
         android:duration="100"/>
     <item
-        android:drawable="@drawable/su-6"
+        android:drawable="@drawable/su6"
         android:duration="100"/>
     <item
-        android:drawable="@drawable/su-7"
+        android:drawable="@drawable/su7"
         android:duration="100"/>
     <item
-        android:drawable="@drawable/su-8"
+        android:drawable="@drawable/su8"
         android:duration="100"/>
     <item
-        android:drawable="@drawable/su-9"
+        android:drawable="@drawable/su9"
         android:duration="100"/>
     <item
-        android:drawable="@drawable/su-10"
+        android:drawable="@drawable/su10"
         android:duration="100"/>
     <item
-        android:drawable="@drawable/su-11"
+        android:drawable="@drawable/su11"
         android:duration="100"/>
     <item
-        android:drawable="@drawable/su-12"
+        android:drawable="@drawable/su12"
         android:duration="100"/>
     <item
-        android:drawable="@drawable/su-13"
+        android:drawable="@drawable/su13"
         android:duration="100"/>
     <item
-        android:drawable="@drawable/su-14"
+        android:drawable="@drawable/su14"
         android:duration="100"/>
     <item
-        android:drawable="@drawable/su-15"
+        android:drawable="@drawable/su15"
         android:duration="100"/>
     <item
-        android:drawable="@drawable/su-16"
+        android:drawable="@drawable/su16"
         android:duration="100"/>
     <item
-        android:drawable="@drawable/su-17"
+        android:drawable="@drawable/su17"
         android:duration="100"/>
     <item
-        android:drawable="@drawable/su-18"
+        android:drawable="@drawable/su18"
         android:duration="100"/>
     <item
-        android:drawable="@drawable/su-19"
-        android:duration="100"/>
+        android:drawable="@drawable/su19"
+        android:duration="1000"/>
 
 
 </animation-list>
